@@ -3,7 +3,7 @@ import Navbar from "./components/Navbar";
 
 export default function App() {
   return (
-    <div className="container mx-auto p-5 rtl font-['Baloo Bhaijaan']">
+    <div className="container mx-auto p-5 rtl font-['Baloo_Bhaijaan_2']">
       <Navbar />
     </div>
   );

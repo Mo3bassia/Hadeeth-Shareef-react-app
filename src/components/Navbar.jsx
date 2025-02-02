@@ -1,5 +1,6 @@
 import React from "react";
 
+
 export default function Navbar() {
   return (
     <div className="navbar bg-base-100 shadow-sm flex justify-between flex-row-reverse">
