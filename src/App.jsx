@@ -1,5 +1,10 @@
 import React from "react";
+import Navbar from "./components/Navbar";
 
 export default function App() {
-  return <div className="bg-slate-800 text-slate-100 text-lg">App</div>;
+  return (
+    <div className="container mx-auto p-5 rtl font-['Baloo Bhaijaan']">
+      <Navbar />
+    </div>
+  );
 }
