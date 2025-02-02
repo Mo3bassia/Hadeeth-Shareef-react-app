@@ -1,38 +1,54 @@
 import React from "react";
-
+import { NavLink, Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
-    <div className="navbar bg-base-100 shadow-sm flex justify-between flex-row-reverse">
-      <div className="navbar-center">
-        <a className="btn btn-ghost text-xl">حديث شريف</a>
+    <div className="navbar bg-base-100 shadow-lg px-4">
+      <div className="flex-1">
+        <Link
+          to={"/"}
+          className="btn btn-ghost text-2xl font-bold hover:bg-primary hover:text-white transition-colors"
+        >
+          حديث شريف
+        </Link>
       </div>
+
       <div className="navbar-center hidden md:flex">
-        <ul className="menu menu-horizontal px-1">
+        <ul className="menu menu-horizontal gap-2">
           <li>
-            <a>Item 1</a>
+            <NavLink
+              to={"/"}
+              className={({ isActive }) =>
+                `px-4 hover:bg-primary hover:text-white transition-colors ${
+                  isActive ? "bg-primary text-white" : ""
+                }`
+              }
+            >
+              الرئيسية
+            </NavLink>
           </li>
           <li>
-            <details>
-              <summary>Parent</summary>
-              <ul className="p-2">
-                <li>
-                  <a>Submenu 1</a>
-                </li>
-                <li>
-                  <a>Submenu 2</a>
-                </li>
-              </ul>
-            </details>
-          </li>
-          <li>
-            <a>Item 3</a>
+            <NavLink
+              to={"/hadith"}
+              className={({ isActive }) =>
+                `px-4 hover:bg-primary hover:text-white transition-colors ${
+                  isActive ? "bg-primary text-white" : ""
+                }`
+              }
+            >
+              الأحاديث
+            </NavLink>
           </li>
         </ul>
       </div>
+
       <div className="md:hidden">
-        <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
+        <div className="dropdown dropdown-end">
+          <div
+            tabIndex={0}
+            role="button"
+            className="btn btn-ghost btn-circle hover:bg-primary hover:text-white transition-colors"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -40,27 +56,23 @@ export default function Navbar() {
               viewBox="0 0 24 24"
               stroke="currentColor"
             >
-              {" "}
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
                 d="M4 6h16M4 12h16M4 18h7"
-              />{" "}
+              />
             </svg>
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[999] mt-3 w-52 p-2 shadow-lg"
           >
             <li>
-              <a>Homepage</a>
+              <NavLink to={"/"}>الرئيسية</NavLink>
             </li>
             <li>
-              <a>Portfolio</a>
-            </li>
-            <li>
-              <a>About</a>
+              <NavLink to={"/hadith"}>الأحاديث</NavLink>
             </li>
           </ul>
         </div>
