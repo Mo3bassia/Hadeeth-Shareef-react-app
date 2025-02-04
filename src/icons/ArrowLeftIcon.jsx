@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function ArrowRightIcon({ className }) {
+export default function ArrowLeftIcon({ className }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -13,7 +13,7 @@ export default function ArrowRightIcon({ className }) {
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        d="M15.75 19.5 8.25 12l7.5-7.5"
+        d="m8.25 4.5 7.5 7.5-7.5 7.5"
       />
     </svg>
   );

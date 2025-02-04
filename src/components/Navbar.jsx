@@ -47,7 +47,7 @@ export default function Navbar() {
           <div
             tabIndex={0}
             role="button"
-            className="btn btn-ghost btn-circle hover:bg-primary hover:text-white transition-colors"
+            className="btn btn-ghost btn-circle hover:bg-blue-500 hover:text-white transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -72,7 +72,7 @@ export default function Navbar() {
               <NavLink to={"/"}>الرئيسية</NavLink>
             </li>
             <li>
-              <NavLink to={"/hadith"}>الأحاديث</NavLink>
+              <NavLink to={"/hadiths"}>الأحاديث</NavLink>
             </li>
           </ul>
         </div>

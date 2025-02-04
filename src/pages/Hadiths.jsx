@@ -46,24 +46,23 @@ export default function Hadith() {
             {hadithList?.map((hadith) => {
               console.log(hadith);
               return (
-                <div
+                <Link
                   className="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden cursor-pointer group border border-gray-100 dark:border-gray-700 p-6 hover:scale-[1.03]"
                   key={hadith.id}
+                  to={`/hadiths/${hadith.id}/page/1`}
                 >
-                  <Link to={`/hadiths/${hadith.id}/page/1`}>
-                    <div className="flex gap-3 md:gap-4 lg:gap-5 flex-row items-center">
-                      <div className="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400">
-                        <FolderIcon />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex justify-between items-center">
-                          <h2 className="card-title">{hadith.title}</h2>
-                          <ArrowRightIcon />
-                        </div>
+                  <div className="flex gap-3 md:gap-4 lg:gap-5 flex-row items-center">
+                    <div className="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400">
+                      <FolderIcon />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center">
+                        <h2 className="card-title">{hadith.title}</h2>
+                        <ArrowRightIcon className={"w-5 h-5"} />
                       </div>
                     </div>
-                  </Link>
-                </div>
+                  </div>
+                </Link>
               );
             })}
           </div>

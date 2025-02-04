@@ -1,16 +1,55 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-
+import React, { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import Hadith from "../components/Hadith";
 import Loader from "../components/Loader";
+import ArrowLeftIcon from "../icons/ArrowLeftIcon";
+import ArrowRightIcon from "../icons/ArrowRightIcon";
 
 export default function Page() {
   let { hadithsId, pageid } = useParams();
+  const containerEl = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hadithList, setHadithList] = useState([]);
   const [hadiths, setHadiths] = useState([]);
   const [hadithName, setHadithName] = useState("");
   const [totalHadiths, setTotalHadiths] = useState(0);
+  const [heightContainer, setHeightContainer] = useState(0);
+  const [pageInput, setPageInput] = useState("");
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  const handlePageInputChange = (e) => {
+    const value = e.target.value;
+    // السماح فقط بالأرقام
+    if (/^\d*$/.test(value)) {
+      setPageInput(value);
+    }
+  };
+
+  const handlePageSubmit = (e) => {
+    e.preventDefault();
+    const pageNumber = parseInt(pageInput);
+
+    // التحقق من وجود الصفحة
+    if (!pageNumber || pageNumber <= 0) {
+      setError("رقم الصفحة غير صحيح");
+      return;
+    }
+
+    if (pageNumber > hadithList.meta?.last_page) {
+      setError(`آخر صفحة متاحة هي ${hadithList.meta?.last_page}`);
+      return;
+    }
+
+    navigate(`/hadiths/${hadithsId}/page/${pageNumber}`);
+    setPageInput("");
+    setError(null);
+  };
+
   useEffect(() => {
+    setHadiths([]);
+    setIsLoading(true);
     async function getHadithList() {
       let request = await fetch(
         `https://hadeethenc.com/api/v1/hadeeths/list/?language=ar&category_id=${hadithsId}&page=${pageid}`
@@ -23,24 +62,29 @@ export default function Page() {
       setHadithName(responseForName[hadithsId - 1].title);
       setTotalHadiths(responseForName[hadithsId - 1].hadeeths_count);
       setHadithList(response);
-      [...Array(20).keys()].forEach((id) => {
+      [...Array(response.data.length).keys()].forEach((id) => {
         async function getHadith() {
           let request = await fetch(
             `https://hadeethenc.com/api/v1/hadeeths/one/?language=ar&id=${response.data[id].id}`
           );
           let hadith = await request.json();
           setHadiths((prev) => [...prev, hadith]);
-          if (id == 19) {
+          if (id == response.data.length - 1) {
+            setHadiths((prev) => [...prev].sort((a, b) => a.id - b.id));
             setIsLoading(false);
           }
+          console.log(hadith);
         }
         getHadith();
       });
     }
 
     getHadithList();
-  }, []);
+  }, [pageid]);
 
+  useEffect(function () {
+    setHeightContainer(containerEl?.current?.offsetHeight);
+  });
   return (
     <>
       {isLoading ? (
@@ -48,7 +92,7 @@ export default function Page() {
           <Loader />
         </div>
       ) : (
-        <div className="min-h-screen">
+        <div className={`min-h-screen`} ref={containerEl}>
           <div className="mx-auto w-[90%] sm:w-[85%] md:w-[80%] lg:w-[75%] xl:w-[70%] py-10">
             <div className="flex flex-col gap-6 mb-8">
               <div className="flex items-center justify-between">
@@ -86,44 +130,136 @@ export default function Page() {
             </div>
 
             <div className="grid grid-cols-1 gap-6">
-              {hadiths?.map((hadith) => {
-                return (
-                  <div
-                    className="bg-[#1E293B] rounded-lg p-4 md:p-6 hover:bg-[#2D3B4F] transition-all duration-300 border border-gray-800"
-                    key={hadith.id}
-                  >
-                    <div className="flex items-center justify-between mb-3 md:mb-4">
-                      <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-white">
-                        {hadith.title}
-                      </h2>
-                      <button className="text-blue-500 hover:text-blue-400">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                    <div className="flex items-center gap-2 mt-3 md:mt-4">
-                      <span className="text-gray-400 text-xs sm:text-sm md:text-base">
-                        {hadith.attribution}
-                      </span>
-                      <span className="bg-blue-600 text-white text-xs sm:text-sm md:text-base px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">
-                        {hadith.grade}
-                      </span>
-                    </div>
-                  </div>
-                );
+              {[...hadiths.sort((a, b) => a.id - b.id)]?.map((hadith) => {
+                return <Hadith hadith={hadith} key={hadith.id} />;
               })}
+            </div>
+
+            {/* Pagination */}
+            <div className="flex flex-col items-center gap-6 mt-8">
+              {/* Page Input */}
+              <div className="flex items-center gap-3 bg-[#1E293B] p-3 rounded-xl border border-gray-800">
+                <span className="text-gray-400 text-sm">انتقال إلى</span>
+                <form
+                  onSubmit={handlePageSubmit}
+                  className="flex flex-col items-center gap-2"
+                >
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="text"
+                      value={pageInput}
+                      onChange={handlePageInputChange}
+                      placeholder="رقم الصفحة"
+                      className={`w-24 h-9 bg-[#2D3B4F] text-gray-300 rounded-lg px-3 focus:outline-none border ${
+                        error ? "border-red-500" : "border-gray-700"
+                      } text-center placeholder:text-gray-500 text-sm`}
+                      min="1"
+                      max={hadithList.meta?.last_page}
+                    />
+                    <button
+                      type="submit"
+                      className="btn btn-sm bg-blue-600 hover:bg-blue-700 text-white border-none min-h-0 h-9"
+                    >
+                      انتقال
+                    </button>
+                  </div>
+                  {error && (
+                    <span className="text-red-500 text-xs mt-1">{error}</span>
+                  )}
+                </form>
+              </div>
+
+              {/* Pagination Buttons */}
+              <div className="join flex-wrap justify-center items-center gap-2">
+                {/* Previous Button */}
+                <NavLink
+                  to={`/hadiths/${hadithsId}/page/${parseInt(pageid) - 1}`}
+                  className={`join-item btn bg-[#1E293B] text-gray-300 hover:bg-[#2D3B4F] border-gray-800 ${
+                    parseInt(pageid) <= 1 ? "btn-disabled" : ""
+                  }`}
+                >
+                  <ArrowLeftIcon className="w-5 h-5" />
+                </NavLink>
+
+                {/* Page Numbers */}
+                {(() => {
+                  const lastPage = hadithList.meta?.last_page;
+                  const currentPage = parseInt(pageid);
+                  let pages = [];
+
+                  if (lastPage <= 9) {
+                    // إذا كان عدد الصفحات 9 أو أقل، اعرض كل الأرقام
+                    pages = Array.from({ length: lastPage }, (_, i) => i + 1);
+                  } else {
+                    // إذا كان العدد أكبر من 9، اعرض النظام المطلوب
+                    if (currentPage <= 4) {
+                      // في بداية الصفحات
+                      pages = [1, 2, 3, 4, 5, null, lastPage - 1, lastPage];
+                    } else if (currentPage >= lastPage - 3) {
+                      // في نهاية الصفحات
+                      pages = [
+                        1,
+                        2,
+                        null,
+                        lastPage - 4,
+                        lastPage - 3,
+                        lastPage - 2,
+                        lastPage - 1,
+                        lastPage,
+                      ];
+                    } else {
+                      // في المنتصف
+                      pages = [
+                        1,
+                        2,
+                        null,
+                        currentPage - 1,
+                        currentPage,
+                        currentPage + 1,
+                        null,
+                        lastPage - 1,
+                        lastPage,
+                      ];
+                    }
+                  }
+
+                  return pages.map((page, index) => {
+                    if (page === null) {
+                      return (
+                        <button
+                          key={`dots-${index}`}
+                          className="join-item btn btn-disabled bg-[#1E293B] text-gray-500 border-gray-800"
+                        >
+                          ...
+                        </button>
+                      );
+                    }
+                    return (
+                      <NavLink
+                        to={`/hadiths/${hadithsId}/page/${page}`}
+                        className={`join-item btn bg-[#1E293B] text-gray-300 hover:bg-[#2D3B4F] border-gray-800 ${
+                          currentPage === page ? "btn-active" : ""
+                        }`}
+                        key={page}
+                      >
+                        {page}
+                      </NavLink>
+                    );
+                  });
+                })()}
+
+                {/* Next Button */}
+                <NavLink
+                  to={`/hadiths/${hadithsId}/page/${parseInt(pageid) + 1}`}
+                  className={`join-item btn bg-[#1E293B] text-gray-300 hover:bg-[#2D3B4F] border-gray-800 ${
+                    parseInt(pageid) >= hadithList.meta?.last_page
+                      ? "btn-disabled"
+                      : ""
+                  }`}
+                >
+                  <ArrowRightIcon className="w-5 h-5" />
+                </NavLink>
+              </div>
             </div>
           </div>
         </div>
