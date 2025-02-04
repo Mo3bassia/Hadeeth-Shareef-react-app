@@ -6,7 +6,7 @@ import Loader from "../components/Loader";
 import ArrowLeftIcon from "../icons/ArrowLeftIcon";
 import ArrowRightIcon from "../icons/ArrowRightIcon";
 
-export default function Page() {
+export default function Page({ allCategories }) {
   let { hadithsId, pageid } = useParams();
   const containerEl = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -73,7 +73,6 @@ export default function Page() {
             setHadiths((prev) => [...prev].sort((a, b) => a.id - b.id));
             setIsLoading(false);
           }
-          console.log(hadith);
         }
         getHadith();
       });
@@ -85,6 +84,7 @@ export default function Page() {
   useEffect(function () {
     setHeightContainer(containerEl?.current?.offsetHeight);
   });
+  console.log(allCategories);
   return (
     <>
       {isLoading ? (
@@ -131,7 +131,13 @@ export default function Page() {
 
             <div className="grid grid-cols-1 gap-6">
               {[...hadiths.sort((a, b) => a.id - b.id)]?.map((hadith) => {
-                return <Hadith hadith={hadith} key={hadith.id} />;
+                return (
+                  <Hadith
+                    hadith={hadith}
+                    key={hadith.id}
+                    allCategories={allCategories}
+                  />
+                );
               })}
             </div>
 
