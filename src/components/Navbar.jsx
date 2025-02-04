@@ -3,11 +3,11 @@ import { NavLink, Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
-    <div className="navbar bg-base-100 shadow-lg px-4">
+    <div className="navbar bg-base-100 shadow-lg p-4">
       <div className="flex-1">
         <Link
           to={"/"}
-          className="btn btn-ghost text-2xl font-bold hover:bg-primary hover:text-white transition-colors"
+          className="btn btn-ghost text-xl md:text-2xl lg:text-3xl font-bold hover:bg-primary hover:text-white transition-colors"
         >
           حديث شريف
         </Link>
@@ -29,7 +29,7 @@ export default function Navbar() {
           </li>
           <li>
             <NavLink
-              to={"/hadith"}
+              to={"/hadiths"}
               className={({ isActive }) =>
                 `px-4 hover:bg-primary hover:text-white transition-colors ${
                   isActive ? "bg-primary text-white" : ""
