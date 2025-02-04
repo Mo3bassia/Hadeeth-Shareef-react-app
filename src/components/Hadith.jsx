@@ -1,35 +1,59 @@
-import React from "react";
+import React, { useState } from "react";
+import SaveIcon from "../icons/BookmarkIcon";
+import CopyIcon from "../icons/Clipboard";
+import { Link } from "react-router-dom";
 
 export default function Hadith({ hadith, allCategories }) {
-  console.log(hadith.categories);
+  const [showCopyNotification, setShowCopyNotification] = useState(false);
+
+  const handleCopy = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigator.clipboard.writeText(hadith.title);
+    setShowCopyNotification(true);
+    setTimeout(() => setShowCopyNotification(false), 2000);
+  };
+
   return (
-    <div className="bg-[#1E293B] rounded-lg p-4 md:p-6 hover:bg-[#2D3B4F] transition-all duration-300 border border-gray-800">
+    <Link
+      to={"/"}
+      className="bg-[#1E293B] rounded-lg p-4 md:p-6 transition-transform duration-300 hover:scale-[1.02] border border-gray-800 relative select-none cursor-pointer"
+    >
       <div className="flex items-center justify-between mb-3 md:mb-4">
-        <h2 className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold text-white font-alexandria leading-[1.8]">
-          {hadith.title}
-        </h2>
-        <button className="text-blue-500 hover:text-blue-400">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+        <div>
+          <h2 className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold text-white font-alexandria leading-[1.8]">
+            {hadith.title}
+          </h2>
+          <span className="text-xs text-blue-400 block mt-1">
+            (اضغط هنا للتفاصيل)
+          </span>
+        </div>
+        <div className="flex gap-2 items-center">
+          <button
+            className="text-gray-400 hover:text-blue-400 transition-colors p-1.5 rounded-full hover:bg-[#2D3B4F] cursor-pointer"
+            title="حفظ"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
-            />
-          </svg>
-        </button>
+            <SaveIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+          </button>
+          <button
+            className="text-gray-400 hover:text-blue-400 transition-colors p-1.5 rounded-full hover:bg-[#2D3B4F] cursor-pointer relative"
+            title="نسخ"
+            onClick={handleCopy}
+          >
+            <CopyIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+            {showCopyNotification && (
+              <span className="absolute left-1/2 -translate-x-1/2 top-full mt-2 bg-green-900/50 text-green-300 px-2 py-1 rounded text-xs notification-fade-out whitespace-nowrap">
+                تم النسخ بنجاح
+              </span>
+            )}
+          </button>
+        </div>
       </div>
       <div className="flex items-center gap-2 mt-3 md:mt-4">
         <span className="text-gray-400 text-xs sm:text-sm md:text-base">
           {hadith.attribution}
         </span>
-        <span className="bg-blue-600 text-white text-xs sm:text-sm md:text-base px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">
+        <span className="bg-blue-900/50 text-blue-300 text-xs sm:text-sm md:text-base px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">
           {hadith.grade}
         </span>
       </div>
@@ -56,6 +80,6 @@ export default function Hadith({ hadith, allCategories }) {
           })}
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
