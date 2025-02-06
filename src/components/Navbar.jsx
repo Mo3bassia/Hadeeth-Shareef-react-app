@@ -3,7 +3,7 @@ import { NavLink, Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
-    <div className="backdrop-blur-md bg-gradient-to-b from-gray-900/90 to-transparent border-b border-white/10">
+    <div className="backdrop-blur-md bg-gradient-to-b from-gray-900/90 to-transparent border-b border-white/10 relative z-50">
       <nav className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           <Link
@@ -43,7 +43,7 @@ export default function Navbar() {
           <div className="md:hidden">
             <div className="dropdown dropdown-end">
               <button
-                className="p-2 rounded-lg backdrop-blur-sm bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300"
+                className="p-2 rounded-lg backdrop-blur-sm bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 cursor-pointer"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -60,7 +60,8 @@ export default function Navbar() {
                   />
                 </svg>
               </button>
-              <ul className="dropdown-content menu mt-2 p-2 rounded-lg backdrop-blur-md bg-gray-900/90 border border-white/10 w-52">
+              <ul className="dropdown-content menu mt-2 p-2 rounded-lg backdrop-blur-md bg-gray-900/90 
+                border border-white/10 w-52 shadow-xl shadow-black/10">
                 {[
                   { to: "/", label: "الرئيسية" },
                   { to: "/hadiths", label: "الأحاديث" },

@@ -62,7 +62,7 @@ export default function Home() {
       </div>
 
       {/* Enhanced Decorative Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none -z-30">
         <div className="absolute top-20 right-10 w-32 h-32 border border-white/10 rounded-2xl backdrop-blur-lg bg-gradient-to-br from-white/5 to-white/0 rotate-12 animate-float"></div>
         <div className="absolute bottom-20 left-10 w-40 h-40 border border-white/10 rounded-full backdrop-blur-lg bg-gradient-to-br from-white/5 to-white/0 -rotate-12 animate-float-delay"></div>
         <div className="absolute top-1/2 left-1/3 w-24 h-24 border border-white/10 rounded-lg backdrop-blur-lg bg-gradient-to-br from-white/5 to-white/0 rotate-45 animate-float-slow"></div>
@@ -102,9 +102,7 @@ export default function Home() {
                 hover:bg-white/10 transition-all duration-500 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/10
                 ${feature.animation}`}
             >
-              <div
-                className=''
-              >
+              <div className="">
                 <span className="text-3xl filter drop-shadow-lg">
                   {feature.icon}
                 </span>

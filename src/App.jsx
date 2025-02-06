@@ -8,6 +8,7 @@ import About from "./pages/About";
 import Page from "./pages/Page";
 import Saved from "./pages/Saved";
 import { useLocalStorage } from "./hooks/useLocalStorage";
+import Footer from "./components/Footer";
 
 export default function App() {
   let [hadithList, setHadithList] = useState([]);
@@ -131,6 +132,7 @@ export default function App() {
             <Route path="*" element={<h1>Not Found</h1>} />
           </Routes>
         </main>
+        <Footer />
       </div>
     </BrowserRouter>
   );
