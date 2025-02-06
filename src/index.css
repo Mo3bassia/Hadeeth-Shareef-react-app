@@ -7,4 +7,88 @@
 
 @theme {
   --font-alexandria: "Alexandria";
+  --font-Naskh: "Noto Naskh Arabic";
+  --font-rubik: "Rubik";
+  --font-Aref: "Aref Ruqaa";
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  75% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.notification-fade-out {
+  animation: fadeOut 2s ease-in-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    transform: translateY(2rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes slideLeft {
+  0% {
+    transform: translateX(2rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes expandContent {
+  0% {
+    transform: translateY(1rem);
+    opacity: 0;
+    max-height: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+    max-height: 1000px;
+  }
+}
+
+.slide-down {
+  animation: slideDown 0.4s ease forwards;
+  will-change: transform, opacity;
+}
+.slide-left {
+  animation: slideLeft 0.5s ease-out forwards;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.expand-animation {
+  animation: expandContent 0.5s ease-out forwards;
+  overflow: hidden;
+}
+
+/* تحسين أداء الانيميشن */
+details[open] > div > div {
+  animation: slideDown 0.4s ease forwards;
+}
+
+.font-Alexandria {
+  font-family: 'Alexandria', system-ui, sans-serif !important;
 }

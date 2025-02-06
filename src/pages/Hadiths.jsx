@@ -19,12 +19,10 @@ export default function Hadith() {
       let response = await request.json();
       setHadithList(response);
       setIsLoading(false);
-      console.log(response);
     }
 
     getHadithList();
   }, []);
-  console.log(hadithList);
 
   return (
     <>
@@ -44,7 +42,6 @@ export default function Hadith() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {hadithList?.map((hadith) => {
-              console.log(hadith);
               return (
                 <Link
                   className="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden cursor-pointer group border border-gray-100 dark:border-gray-700 p-6 hover:scale-[1.03]"
@@ -52,7 +49,7 @@ export default function Hadith() {
                   to={`/hadiths/${hadith.id}/page/1`}
                 >
                   <div className="flex gap-3 md:gap-4 lg:gap-5 flex-row items-center">
-                    <div className="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400">
+                    <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-500 dark:text-blue-400">
                       <FolderIcon />
                     </div>
                     <div className="flex-1">

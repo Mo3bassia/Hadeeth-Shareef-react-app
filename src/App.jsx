@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import Hadiths from "./pages/Hadiths";
+import Hadith from "./pages/HadithPage";
 import About from "./pages/About";
 import Page from "./pages/Page";
 
@@ -35,6 +36,10 @@ export default function App() {
               element={<Page allCategories={allCategories} />}
             />
             <Route path="/about" element={<About />} />
+            <Route
+              path="/hadiths/:hadithsId/page/:pageid/hadith/:hadith"
+              element={<Hadith />}
+            />
           </Routes>
         </main>
       </div>

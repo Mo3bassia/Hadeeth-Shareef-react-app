@@ -84,7 +84,19 @@ export default function Page({ allCategories }) {
   useEffect(function () {
     setHeightContainer(containerEl?.current?.offsetHeight);
   });
-  console.log(allCategories);
+
+  useEffect(function () {
+    if (location.search) {
+      const element = document.getElementById(
+        `hadith-${location.search.split("?")[1].replace("hadithid=", "")}`
+      );
+
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  });
+
   return (
     <>
       {isLoading ? (
@@ -133,9 +145,12 @@ export default function Page({ allCategories }) {
               {[...hadiths.sort((a, b) => a.id - b.id)]?.map((hadith) => {
                 return (
                   <Hadith
+                    id={`hadith-${hadith.id}`}
                     hadith={hadith}
                     key={hadith.id}
                     allCategories={allCategories}
+                    hadithsId={hadithsId}
+                    pageid={pageid}
                   />
                 );
               })}

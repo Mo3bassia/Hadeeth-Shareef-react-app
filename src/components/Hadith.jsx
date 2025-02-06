@@ -3,7 +3,13 @@ import SaveIcon from "../icons/BookmarkIcon";
 import CopyIcon from "../icons/Clipboard";
 import { Link } from "react-router-dom";
 
-export default function Hadith({ hadith, allCategories }) {
+export default function Hadith({
+  hadith,
+  allCategories,
+  hadithsId,
+  pageid,
+  id,
+}) {
   const [showCopyNotification, setShowCopyNotification] = useState(false);
 
   const handleCopy = (e) => {
@@ -16,8 +22,9 @@ export default function Hadith({ hadith, allCategories }) {
 
   return (
     <Link
-      to={"/"}
+      to={`/hadiths/${hadithsId}/page/${pageid}/hadith/${hadith.id}`}
       className="bg-[#1E293B] rounded-lg p-4 md:p-6 transition-transform duration-300 hover:scale-[1.02] border border-gray-800 relative select-none cursor-pointer"
+      id={id}
     >
       <div className="flex items-center justify-between mb-3 md:mb-4">
         <div>

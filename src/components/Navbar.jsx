@@ -7,7 +7,7 @@ export default function Navbar() {
       <div className="flex-1">
         <Link
           to={"/"}
-          className="btn btn-ghost text-xl md:text-2xl lg:text-3xl font-bold hover:bg-primary hover:text-white transition-colors"
+          className="btn btn-ghost text-xl md:text-2xl lg:text-3xl font-bold hover:bg-blue-500 hover:text-white transition-colors"
         >
           حديث شريف
         </Link>
@@ -19,8 +19,8 @@ export default function Navbar() {
             <NavLink
               to={"/"}
               className={({ isActive }) =>
-                `px-4 hover:bg-primary hover:text-white transition-colors ${
-                  isActive ? "bg-primary text-white" : ""
+                `px-4 hover:bg-blue-500 hover:text-white transition-colors ${
+                  isActive ? "bg-blue-500 text-white" : ""
                 }`
               }
             >
@@ -31,8 +31,8 @@ export default function Navbar() {
             <NavLink
               to={"/hadiths"}
               className={({ isActive }) =>
-                `px-4 hover:bg-primary hover:text-white transition-colors ${
-                  isActive ? "bg-primary text-white" : ""
+                `px-4 hover:bg-blue-500 hover:text-white transition-colors ${
+                  isActive ? "bg-blue-500 text-white" : ""
                 }`
               }
             >
