@@ -9,7 +9,11 @@ export default function Navbar() {
           to={"/"}
           className="btn btn-ghost text-xl md:text-2xl lg:text-3xl font-bold hover:bg-blue-500 hover:text-white transition-colors"
         >
-          حديث شريف
+          <img
+            src="./logo-white-and-blue.png"
+            className="w-32 sm:w-36 md:w-40 lg:w-44"
+            alt="حديث شريف"
+          />
         </Link>
       </div>
 

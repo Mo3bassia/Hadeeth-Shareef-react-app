@@ -3,15 +3,20 @@ import { useParams, Link } from "react-router-dom";
 import BookmarkIcon from "../icons/BookmarkIcon";
 import ArrowDownIcon from "../icons/ArrowDownIcon";
 import Clipboard from "../icons/Clipboard";
-import ShareIcon from "../icons/ShareIcon";
+import ZoomInIcon from "../icons/ZoomInIcon.jsx";
 import ArrowLeftIcon from "../icons/ArrowLeftIcon";
 import Loader from "../components/Loader";
+import { useLocalStorage } from "../hooks/useLocalStorage.js";
 
 export default function HadithPage() {
   const { hadithsId, pageid, hadith } = useParams();
   const [currentHadith, setCurrentHadith] = useState({});
   const [isLoading, setIsLoading] = useState(true);
-  const [showTashkeel, setShowTashkeel] = useState(true); // إضافة حالة التشكيل
+  const [showTashkeel, setShowTashkeel] = useLocalStorage(true, 'tashkeel'); // إضافة حالة التشكيل
+  const [showCopyNotification, setShowCopyNotification] = useState(false);
+  const [showCopyLinkNotification, setShowCopyLinkNotification] =
+    useState(false);
+  const [fontSize, setFontSize] = useLocalStorage(1, "font-size"); // تصحيح ترتيب المعاملات
 
   useEffect(() => {
     async function getHadith() {
@@ -24,6 +29,27 @@ export default function HadithPage() {
     }
     getHadith();
   }, [hadith]);
+
+  const handleCopy = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigator.clipboard.writeText(currentHadith.hadeeth);
+    setShowCopyNotification(true);
+    setTimeout(() => setShowCopyNotification(false), 2000);
+  };
+
+  const getZoomText = (size) => {
+    if (size === 1) return "تكبير النص";
+    if (size === 1.25) return "تكبير النص";
+    return "تصغير النص";
+  };
+
+  const handleZoom = () => {
+    setFontSize((prev) => {
+      if (prev >= 1.5) return 1;
+      return prev + 0.25;
+    });
+  };
 
   const HadithContentWithoutTashkel = currentHadith?.hadeeth
     ?.replaceAll("ُ", "")
@@ -98,14 +124,35 @@ export default function HadithPage() {
                   />
                 </div>
                 <div className="flex gap-2">
-                  <button className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-[#18212e] flex items-center justify-center hover:bg-[#1c2431] transition-colors cursor-pointer">
-                    <ShareIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <button
+                    onClick={handleZoom}
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-[#18212e] flex items-center justify-center hover:bg-[#1c2431] transition-colors cursor-pointer group relative"
+                    title="تكبير/تصغير النص"
+                  >
+                    <ZoomInIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="absolute scale-0 group-hover:scale-100 transition-all duration-200 -top-12 right-1/2 translate-x-1/2 text-xs bg-[#293446] text-gray-300 px-3 py-2 rounded shadow-lg whitespace-nowrap z-50">
+                      {getZoomText(fontSize)}
+                    </span>
                   </button>
-                  <button className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-[#18212e] flex items-center justify-center hover:bg-[#1c2431] transition-colors cursor-pointer">
+                  <button className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-[#18212e] flex items-center justify-center hover:bg-[#1c2431] transition-colors cursor-pointer group relative">
                     <BookmarkIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="absolute scale-0 group-hover:scale-100 transition-all duration-200 -top-12 right-1/2 translate-x-1/2 text-xs bg-[#293446] text-gray-300 px-3 py-2 rounded shadow-lg whitespace-nowrap z-50">
+                      حفظ الحديث
+                    </span>
                   </button>
-                  <button className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-[#18212e] flex items-center justify-center hover:bg-[#1c2431] transition-colors cursor-pointer">
+                  <button
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-[#18212e] flex items-center justify-center hover:bg-[#1c2431] transition-colors cursor-pointer relative group"
+                    onClick={handleCopy}
+                  >
                     <Clipboard className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="absolute scale-0 group-hover:scale-100 transition-all duration-200 -top-12 right-1/2 translate-x-1/2 text-xs bg-[#293446] text-gray-300 px-3 py-2 rounded shadow-lg whitespace-nowrap z-50">
+                      نسخ الحديث
+                    </span>
+                    {showCopyNotification && (
+                      <span className="absolute left-1/2 -translate-x-1/2 top-full mt-2 bg-green-900/50 text-green-300 px-3 py-2 rounded text-xs notification-fade-out whitespace-nowrap z-50">
+                        تم النسخ بنجاح
+                      </span>
+                    )}
                   </button>
                 </div>
               </div>
@@ -124,14 +171,18 @@ export default function HadithPage() {
 
             {/* Main Hadith Content */}
             <div className="bg-[#18212e] rounded-lg p-6 mb-6">
-              <div className="border border-[#1c243182] rounded-lg ">
+              <div className="border border-[#1c243182] rounded-lg p-6">
                 {showTashkeel ? (
-                  <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-right leading-[2.5] font-Alexandria !font-normal">
+                  <p
+                    style={{ fontSize: `${fontSize}rem` }}
+                    className="text-base sm:text-lg md:text-xl lg:text-2xl text-right leading-[2.5] font-Alexandria !font-normal transition-all duration-200"
+                  >
                     {currentHadith.hadeeth}
                   </p>
                 ) : (
                   <p
-                    className="text-base sm:text-lg md:text-xl lg:text-2xl text-right leading-[2.5] font-Alexandria !font-normal"
+                    style={{ fontSize: `${fontSize}rem` }}
+                    className="text-base sm:text-lg md:text-xl lg:text-2xl text-right leading-[2.5] font-Alexandria !font-normal transition-all duration-200"
                     dangerouslySetInnerHTML={{
                       __html: highlightWords(
                         HadithContentWithoutTashkel,
@@ -143,7 +194,7 @@ export default function HadithPage() {
               </div>
               <div className="flex justify-end items-center gap-6">
                 <div className="flex items-center gap-3 bg-[#1c2431] rounded-lg px-4 py-2">
-                  <span className="text-sm sm:text-base ">
+                  <span className="text-sm sm:text-base">
                     {currentHadith.grade}
                   </span>
                   <div className="w-5 h-5 rounded-full bg-[#18212e] flex items-center justify-center text-green-500">

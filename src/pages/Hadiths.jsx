@@ -4,25 +4,15 @@ import FolderIcon from "../icons/FolderIcon.jsx";
 import ArrowRightIcon from "../icons/ArrowRightIcon.jsx";
 import { Link } from "react-router-dom";
 
-export default function Hadith() {
-  let [hadithList, setHadithList] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+export default function Hadith({
+  setAllHadithsId,
+  allHadithsId,
+  hadithList,
+  setHadithList,
+  isLoading,
+}) {
 
-  useEffect(() => {
-    async function getHadithList() {
-      // let request = await fetch(
-      //   "https://hadeethenc.com/api/v1/categories/list/?language=ar"
-      // );
-      let request = await fetch(
-        "https://hadeethenc.com/api/v1/categories/roots/?language=ar"
-      );
-      let response = await request.json();
-      setHadithList(response);
-      setIsLoading(false);
-    }
-
-    getHadithList();
-  }, []);
+  
 
   return (
     <>
@@ -32,7 +22,7 @@ export default function Hadith() {
         </h2>
         <p className="text-center text-sm md:text-base lg:text-lg xl:text-xl mt-4 text-slate-400 mb-10">
           تصفح الأحاديث حسب التصنيف واستكشف كنوز السنة النبوية
-        </p>
+        </p>  
       </div>
       <div>
         {isLoading ? (
@@ -54,7 +44,12 @@ export default function Hadith() {
                     </div>
                     <div className="flex-1">
                       <div className="flex justify-between items-center">
-                        <h2 className="card-title">{hadith.title}</h2>
+                        <div className="flex flex-col gap-2">
+                          <h2 className="card-title">{hadith.title}</h2>
+                          <span className="text-xs text-gray-400">
+                            {hadith.hadeeths_count} حديث
+                          </span>
+                        </div>
                         <ArrowRightIcon className={"w-5 h-5"} />
                       </div>
                     </div>
