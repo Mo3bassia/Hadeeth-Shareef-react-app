@@ -6,10 +6,13 @@ import Hadiths from "./pages/Hadiths";
 import Hadith from "./pages/HadithPage";
 import About from "./pages/About";
 import Page from "./pages/Page";
+import Saved from "./pages/Saved";
+import { useLocalStorage } from "./hooks/useLocalStorage";
 
 export default function App() {
   let [hadithList, setHadithList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [savedHadiths, setSavedHadiths] = useLocalStorage([], "savedHadiths");
   const [allCategories, setAllCategories] = useState([]);
   const [allHadithsId, setAllHadithsId] = useState([]);
   const [allHadiths, setAllHadiths] = useState([]);
@@ -80,8 +83,6 @@ export default function App() {
   //   }
   // }, [allHadithsCount, allHadithsId, allCategories]);
 
-  console.log(allHadiths);
-
   return (
     <BrowserRouter>
       <div className="mt-4 container mx-auto px-5 rtl font-['Baloo_Bhaijaan_2']">
@@ -104,13 +105,30 @@ export default function App() {
             />
             <Route
               path="/hadiths/:hadithsId/page/:pageid"
-              element={<Page allCategories={allCategories} />}
+              element={
+                <Page
+                  allCategories={allCategories}
+                  savedHadiths={savedHadiths}
+                  setSavedHadiths={setSavedHadiths}
+                />
+              }
             />
             <Route path="/about" element={<About />} />
             <Route
               path="/hadiths/:hadithsId/page/:pageid/hadith/:hadith"
               element={<Hadith />}
             />
+            <Route
+              path="/saved"
+              element={
+                <Saved
+                  savedHadiths={savedHadiths}
+                  allCategories={allCategories}
+                  setSavedHadiths={setSavedHadiths}
+                />
+              }
+            />
+            <Route path="*" element={<h1>Not Found</h1>} />
           </Routes>
         </main>
       </div>

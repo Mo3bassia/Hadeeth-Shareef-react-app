@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import SaveIcon from "../icons/BookmarkIcon";
+import SaveSlashIcon from "../icons/SaveSlashIcon";
 import CopyIcon from "../icons/Clipboard";
 import { Link } from "react-router-dom";
 
@@ -9,8 +10,12 @@ export default function Hadith({
   hadithsId,
   pageid,
   id,
+  savedHadiths,
+  setSavedHadiths,
 }) {
   const [showCopyNotification, setShowCopyNotification] = useState(false);
+  const [showSaveNotification, setShowSaveNotification] = useState(false);
+  const [showUnsaveNotifcation, setShowUnsaveNotifcation] = useState(false);
 
   const handleCopy = (e) => {
     e.preventDefault();
@@ -20,6 +25,32 @@ export default function Hadith({
     setTimeout(() => setShowCopyNotification(false), 2000);
   };
 
+  function handleSave(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (savedHadiths.filter((h) => h.id === hadith.id).length) {
+      setSavedHadiths((prev) => prev.filter((h) => h.id !== hadith.id));
+      setShowUnsaveNotifcation(true);
+      setTimeout(() => setShowUnsaveNotifcation(false), 2000);
+    } else {
+      setShowSaveNotification(true);
+      setTimeout(() => setShowSaveNotification(false), 2000);
+      setSavedHadiths((prev) => [
+        ...prev,
+        {
+          ...hadith,
+          currentPage: pageid,
+          hadithsId: hadithsId,
+          pageid: pageid,
+          idHTML: `hadith-${hadith.id}`,
+        },
+      ]);
+    }
+    // setShowSaveNotification(true);
+    // setTimeout(() => setShowSaveNotification(false), 2000);
+    // setSavedHadiths((prev) => [...prev, hadith]);
+  }
+
   return (
     <Link
       to={`/hadiths/${hadithsId}/page/${pageid}/hadith/${hadith.id}`}
@@ -28,39 +59,95 @@ export default function Hadith({
         hover:bg-white/10 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/5"
       id={id}
     >
-      <div className="flex items-center justify-between gap-6">
-        <div className="flex-1">
-          <h2 className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 
+      {/* تعديل التنسيق ليكون responsive */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+        <div className="flex-1 space-y-2">
+          <h2
+            className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 
             bg-clip-text text-transparent group-hover:from-white group-hover:to-blue-300 
-            transition-all duration-300 mb-2 font-alexandria leading-[2]">
+            transition-all duration-300 font-alexandria leading-[2]"
+          >
             {hadith.title}
           </h2>
-          <span className="inline-block bg-blue-500/10 text-blue-400 text-sm px-3 py-1 
-            rounded-full border border-blue-500/20 group-hover:bg-blue-500/20 transition-all">
+          <span
+            className="inline-block bg-blue-500/10 text-blue-400 text-sm px-3 py-1 
+            rounded-full border border-blue-500/20 group-hover:bg-blue-500/20 transition-all"
+          >
             اضغط للتفاصيل
           </span>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex gap-3 self-end sm:self-center w-full sm:w-auto justify-center">
           <button
             className="p-2 rounded-xl bg-white/5 border border-white/10 
-              hover:bg-white/10 transition-all duration-300 group-hover:border-blue-500/20 relative"
+              hover:bg-white/10 transition-all duration-300 group-hover:border-blue-500/20 relative cursor-pointer group/copy"
             onClick={(e) => handleCopy(e)}
           >
             <CopyIcon className="h-5 w-5 text-gray-400 group-hover:text-blue-400" />
+            <span
+              className="absolute scale-0 group-hover/copy:scale-100 transition-all duration-200 -top-12 
+                  right-1/2 translate-x-1/2 text-xs bg-[#293446] text-blue-300 px-3 py-2 
+                  rounded-lg shadow-lg whitespace-nowrap z-50 border border-blue-500/20"
+            >
+              نسخ الحديث
+            </span>
             {showCopyNotification && (
-              <div className="absolute left-1/2 -translate-x-1/2 -bottom-12 
+              <div
+                className="absolute left-1/2 -translate-x-1/2 -bottom-12 
                 bg-green-900/50 text-green-300 px-3 py-1.5 rounded-lg text-sm whitespace-nowrap
-                border border-green-500/20 backdrop-blur-sm">
+                border border-green-500/20 backdrop-blur-sm"
+              >
                 تم النسخ بنجاح
               </div>
             )}
           </button>
           <button
             className="p-2 rounded-xl bg-white/5 border border-white/10 
-              hover:bg-white/10 transition-all duration-300 group-hover:border-blue-500/20"
+              hover:bg-white/10 transition-all duration-300 group-hover:border-blue-500/20 relative cursor-pointer
+              group/save"
+            onClick={(e) => handleSave(e)}
           >
-            <SaveIcon className="h-5 w-5 text-gray-400 group-hover:text-blue-400" />
+            {savedHadiths.filter((h) => h.id === hadith.id).length ? (
+              <>
+                <SaveSlashIcon className="h-5 w-5 text-green-300 fill-green-300 hover:fill-red-400 hover:text-red-400" />
+                <span
+                  className="absolute scale-0 group-hover/save:scale-100 transition-all duration-200 -top-12 
+                  right-1/2 translate-x-1/2 text-xs bg-[#293446] text-red-300 px-3 py-2 
+                  rounded-lg shadow-lg whitespace-nowrap z-50 border border-red-500/20"
+                >
+                  إلغاء الحفظ
+                </span>
+              </>
+            ) : (
+              <>
+                <SaveIcon className="h-5 w-5 text-blue-400 group-hover:text-blue-500 hover:fill-blue-500" />
+                <span
+                  className="absolute scale-0 group-hover/save:scale-100 transition-all duration-200 -top-12 
+                  right-1/2 translate-x-1/2 text-xs bg-[#293446] text-blue-300 px-3 py-2 
+                  rounded-lg shadow-lg whitespace-nowrap z-50 border border-blue-500/20"
+                >
+                  حفظ الحديث
+                </span>
+              </>
+            )}
+            {showSaveNotification && (
+              <div
+                className="absolute left-1/2 -translate-x-1/2 -bottom-12 
+                bg-green-900/50 text-green-300 px-3 py-1.5 rounded-lg text-sm whitespace-nowrap
+                border border-green-500/20 backdrop-blur-sm"
+              >
+                تم الحفظ بنجاح
+              </div>
+            )}
+            {showUnsaveNotifcation && (
+              <div
+                className="absolute left-1/2 -translate-x-1/2 -bottom-12 
+                bg-red-900/50 text-red-300 px-3 py-1.5 rounded-lg text-sm whitespace-nowrap
+                border border-red-500/20 backdrop-blur-sm"
+              >
+                تم الغاء الحفظ بنجاح
+              </div>
+            )}
           </button>
         </div>
       </div>

@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import Hadith from "../components/Hadith";
 import Loader from "../components/Loader";
 import ArrowLeftIcon from "../icons/ArrowLeftIcon";
 import ArrowRightIcon from "../icons/ArrowRightIcon";
 
-export default function Page({ allCategories }) {
+export default function Page({ allCategories, savedHadiths, setSavedHadiths }) {
   let { hadithsId, pageid } = useParams();
   const containerEl = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -97,39 +97,136 @@ export default function Page({ allCategories }) {
     }
   });
 
-  const currentPage = parseInt(pageid);
-  const lastPage = parseInt(hadithList.meta?.last_page) || 1;
+  const renderPaginationButtons = () => {
+    const currentPage = parseInt(pageid);
+    const lastPage = hadithList.meta?.last_page || 1;
+    const paginationItems = [];
 
-  const generatePagination = () => {
-    const pages = [];
+    // Previous Button
+    paginationItems.push(
+      <NavLink
+        key="prev"
+        to={
+          currentPage > 1
+            ? `/hadiths/${hadithsId}/page/${currentPage - 1}`
+            : "#"
+        }
+        className="px-4 py-2 rounded-xl backdrop-blur-md transition-all duration-300 bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10"
+        onClick={(e) => currentPage <= 1 && e.preventDefault()}
+      >
+        <ArrowLeftIcon className="w-5 h-5" />
+      </NavLink>
+    );
+
+    // Always show first page
+    paginationItems.push(
+      <NavLink
+        key="page-1"
+        to={`/hadiths/${hadithsId}/page/1`}
+        className={`px-4 py-2 rounded-xl backdrop-blur-md transition-all duration-300 
+          ${
+            currentPage === 1
+              ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/25"
+              : "bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10"
+          }`}
+      >
+        1
+      </NavLink>
+    );
+
     if (lastPage <= 7) {
-      for (let i = 1; i <= lastPage; i++) {
-        pages.push(i);
+      // Show all pages if 7 or less
+      for (let i = 2; i <= lastPage; i++) {
+        paginationItems.push(
+          <NavLink
+            key={`page-${i}`}
+            to={`/hadiths/${hadithsId}/page/${i}`}
+            className={`px-4 py-2 rounded-xl backdrop-blur-md transition-all duration-300 
+              ${
+                currentPage === i
+                  ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/25"
+                  : "bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10"
+              }`}
+          >
+            {i}
+          </NavLink>
+        );
       }
     } else {
-      if (currentPage <= 4) {
-        for (let i = 1; i <= 5; i++) {
-          pages.push(i);
-        }
-        pages.push('dots');
-        pages.push(lastPage);
-      } else if (currentPage >= lastPage - 3) {
-        pages.push(1);
-        pages.push('dots');
-        for (let i = lastPage - 4; i <= lastPage; i++) {
-          pages.push(i);
-        }
-      } else {
-        pages.push(1);
-        pages.push('dots');
-        pages.push(currentPage - 1);
-        pages.push(currentPage);
-        pages.push(currentPage + 1);
-        pages.push('dots');
-        pages.push(lastPage);
+      // Show dots and nearby pages
+      if (currentPage > 3) {
+        paginationItems.push(
+          <span key="dots-1" className="px-4 py-2 text-gray-400">
+            ...
+          </span>
+        );
+      }
+
+      // Show nearby pages
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(lastPage - 1, currentPage + 1);
+
+      for (let i = start; i <= end; i++) {
+        paginationItems.push(
+          <NavLink
+            key={`page-${i}`}
+            to={`/hadiths/${hadithsId}/page/${i}`}
+            className={`px-4 py-2 rounded-xl backdrop-blur-md transition-all duration-300 
+              ${
+                currentPage === i
+                  ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/25"
+                  : "bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10"
+              }`}
+          >
+            {i}
+          </NavLink>
+        );
+      }
+
+      if (currentPage < lastPage - 2) {
+        paginationItems.push(
+          <span key="dots-2" className="px-4 py-2 text-gray-400">
+            ...
+          </span>
+        );
+      }
+
+      // Always show last page
+      if (lastPage > 1) {
+        paginationItems.push(
+          <NavLink
+            key={`page-${lastPage}`}
+            to={`/hadiths/${hadithsId}/page/${lastPage}`}
+            className={`px-4 py-2 rounded-xl backdrop-blur-md transition-all duration-300 
+              ${
+                currentPage === lastPage
+                  ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/25"
+                  : "bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10"
+              }`}
+          >
+            {lastPage}
+          </NavLink>
+        );
       }
     }
-    return pages;
+
+    // Next Button
+    paginationItems.push(
+      <NavLink
+        key="next"
+        to={
+          currentPage < lastPage
+            ? `/hadiths/${hadithsId}/page/${currentPage + 1}`
+            : "#"
+        }
+        className="px-4 py-2 rounded-xl backdrop-blur-md transition-all duration-300 bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10"
+        onClick={(e) => currentPage >= lastPage && e.preventDefault()}
+      >
+        <ArrowRightIcon className="w-5 h-5" />
+      </NavLink>
+    );
+
+    return paginationItems;
   };
 
   return (
@@ -148,95 +245,74 @@ export default function Page({ allCategories }) {
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Enhanced Header */}
-        <div className="backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl p-6 mb-8">
-          <div className="text-center">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-blue-100 to-gray-300 bg-clip-text text-transparent mb-4">
-              {hadithName}
-            </h1>
-            <div className="flex justify-center gap-4 flex-wrap">
-              <span className="bg-blue-500/10 text-blue-400 px-4 py-1 rounded-full border border-blue-500/20">
-                عدد الأحاديث: {totalHadiths}
-              </span>
-              <span className="bg-purple-500/10 text-purple-400 px-4 py-1 rounded-full border border-purple-500/20">
-                الصفحة: {pageid}
-              </span>
-            </div>
+        {/* Back Button */}
+        <div className="mb-6">
+          <Link
+            to="/hadiths"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl backdrop-blur-md bg-white/5 
+              border border-white/10 text-gray-300 hover:bg-white/10 transition-all duration-300
+              group hover:border-blue-500/20"
+          >
+            <ArrowRightIcon className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
+            <span>العودة للقائمة الرئيسية</span>
+          </Link>
+        </div>
+
+        {isLoading ? (
+          // Loading State
+          <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
+            <Loader />
+            <p className="text-gray-400 animate-pulse">
+              جاري تحميل الأحاديث...
+            </p>
           </div>
-        </div>
-
-        {/* Enhanced Hadiths Grid */}
-        <div className="space-y-4 mb-12">
-          {hadiths?.map((hadith, index) => (
-            <div
-              key={hadith.id}
-              className="fade-in-up"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <Hadith
-                hadith={hadith}
-                currentPage={pageid}
-                allCategories={allCategories}
-              />
+        ) : (
+          <>
+            {/* Enhanced Header */}
+            <div className="backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl p-6 mb-8">
+              <div className="text-center">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-blue-100 to-gray-300 bg-clip-text text-transparent mb-4">
+                  {hadithName}
+                </h1>
+                <div className="flex justify-center gap-4 flex-wrap">
+                  <span className="bg-blue-500/10 text-blue-400 px-4 py-1 rounded-full border border-blue-500/20">
+                    عدد الأحاديث: {totalHadiths}
+                  </span>
+                  <span className="bg-purple-500/10 text-purple-400 px-4 py-1 rounded-full border border-purple-500/20">
+                    الصفحة: {pageid}
+                  </span>
+                </div>
+              </div>
             </div>
-          ))}
-        </div>
 
-        {/* Enhanced Pagination */}
-        <div className="flex justify-center gap-3 flex-wrap">
-          <NavLink
-            key="prev"
-            to={`/hadiths/${hadithsId}/page/${Math.max(1, currentPage - 1)}`}
-            className={`px-4 py-2 rounded-xl backdrop-blur-md transition-all duration-300 
-              ${currentPage <= 1
-                ? "opacity-50 cursor-not-allowed bg-white/5 text-gray-500"
-                : "bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10"
-              }`}
-            onClick={(e) => currentPage <= 1 && e.preventDefault()}
-          >
-            السابق
-          </NavLink>
-
-          {generatePagination().map((page, index) => {
-            if (page === 'dots') {
-              return (
-                <span
-                  key={`dots-${index}`}
-                  className="px-4 py-2 text-gray-400"
+            {/* Enhanced Hadiths Grid */}
+            <div className="space-y-4 mb-12">
+              {hadiths?.map((hadith, index) => (
+                <div
+                  key={hadith.id}
+                  className="fade-in-up"
+                  style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  ...
-                </span>
-              );
-            }
-            
-            return (
-              <NavLink
-                key={`page-${page}`}
-                to={`/hadiths/${hadithsId}/page/${page}`}
-                className={`px-4 py-2 rounded-xl backdrop-blur-md transition-all duration-300 
-                  ${currentPage === page
-                    ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/25"
-                    : "bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10"
-                  }`}
-              >
-                {page}
-              </NavLink>
-            );
-          })}
+                  <Hadith
+                    hadith={hadith}
+                    currentPage={pageid}
+                    allCategories={allCategories}
+                    hadithsId={hadithsId}
+                    pageid={pageid}
+                    id={`hadith-${hadith.id}`}
+                    savedHadiths={savedHadiths}
+                    setSavedHadiths={setSavedHadiths}
+                  />
+                </div>
+              ))}
+            </div>
 
-          <NavLink
-            key="next"
-            to={`/hadiths/${hadithsId}/page/${Math.min(lastPage, currentPage + 1)}`}
-            className={`px-4 py-2 rounded-xl backdrop-blur-md transition-all duration-300 
-              ${currentPage >= lastPage
-                ? "opacity-50 cursor-not-allowed bg-white/5 text-gray-500"
-                : "bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10"
-              }`}
-            onClick={(e) => currentPage >= lastPage && e.preventDefault()}
-          >
-            التالي
-          </NavLink>
-        </div>
+            {/* Enhanced Pagination */}
+            <div className="flex justify-center items-center gap-3 flex-wrap">
+              {renderPaginationButtons()}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

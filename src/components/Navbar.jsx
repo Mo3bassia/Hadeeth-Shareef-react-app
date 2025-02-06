@@ -21,7 +21,8 @@ export default function Navbar() {
           <div className="hidden md:flex gap-4">
             {[
               { to: "/", label: "الرئيسية" },
-              { to: "/hadiths", label: "الأحاديث" }
+              { to: "/hadiths", label: "الأحاديث" },
+              { to: "/saved", label: "المحفوظات" }  // إضافة رابط المحفوظات
             ].map((link) => (
               <NavLink
                 key={link.to}
@@ -62,7 +63,8 @@ export default function Navbar() {
               <ul className="dropdown-content menu mt-2 p-2 rounded-lg backdrop-blur-md bg-gray-900/90 border border-white/10 w-52">
                 {[
                   { to: "/", label: "الرئيسية" },
-                  { to: "/hadiths", label: "الأحاديث" }
+                  { to: "/hadiths", label: "الأحاديث" },
+                  { to: "/saved", label: "المحفوظات" }  // إضافة رابط المحفوظات في القائمة المنسدلة
                 ].map((link) => (
                   <li key={link.to}>
                     <NavLink
