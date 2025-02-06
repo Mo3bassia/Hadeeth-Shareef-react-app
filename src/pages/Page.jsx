@@ -97,194 +97,147 @@ export default function Page({ allCategories }) {
     }
   });
 
+  const currentPage = parseInt(pageid);
+  const lastPage = parseInt(hadithList.meta?.last_page) || 1;
+
+  const generatePagination = () => {
+    const pages = [];
+    if (lastPage <= 7) {
+      for (let i = 1; i <= lastPage; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 4) {
+        for (let i = 1; i <= 5; i++) {
+          pages.push(i);
+        }
+        pages.push('dots');
+        pages.push(lastPage);
+      } else if (currentPage >= lastPage - 3) {
+        pages.push(1);
+        pages.push('dots');
+        for (let i = lastPage - 4; i <= lastPage; i++) {
+          pages.push(i);
+        }
+      } else {
+        pages.push(1);
+        pages.push('dots');
+        pages.push(currentPage - 1);
+        pages.push(currentPage);
+        pages.push(currentPage + 1);
+        pages.push('dots');
+        pages.push(lastPage);
+      }
+    }
+    return pages;
+  };
+
   return (
-    <>
-      {isLoading ? (
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 z-[9999]">
-          <Loader />
-        </div>
-      ) : (
-        <div className={`min-h-screen`} ref={containerEl}>
-          <div className="mx-auto w-[90%] sm:w-[85%] md:w-[80%] lg:w-[75%] xl:w-[70%] py-10">
-            <div className="flex flex-col gap-6 mb-8">
-              <div className="flex items-center justify-between">
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white tracking-tight">
-                  {hadithName}
-                </h1>
-              </div>
+    <div className="min-h-screen relative overflow-hidden backdrop-blur-3xl">
+      {/* Animated Background */}
+      <div className="fixed inset-0 -z-10">
+        <div className="absolute top-0 left-0 w-full h-full bg-[url('/pattern-islamic.png')] opacity-[0.02]"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-[40rem] h-[40rem] bg-gradient-to-r from-purple-600/20 to-green-600/20 rounded-full blur-3xl animate-pulse-slower"></div>
+      </div>
 
-              <div className="text-gray-400 text-sm">
-                {totalHadiths} حديث في هذا التصنيف
-              </div>
+      {/* Glass Decorative Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 right-10 w-32 h-32 border border-white/10 rounded-2xl backdrop-blur-lg bg-gradient-to-br from-white/5 to-white/0 rotate-12 animate-float"></div>
+        <div className="absolute bottom-20 left-10 w-40 h-40 border border-white/10 rounded-full backdrop-blur-lg bg-gradient-to-br from-white/5 to-white/0 -rotate-12 animate-float-delay"></div>
+      </div>
 
-              {/* Search Bar */}
-              <div className="relative w-full lg:w-[60%]">
-                <input
-                  type="text"
-                  placeholder="إبحث في الأحاديث..."
-                  className="w-full bg-[#1E293B] text-gray-300 rounded-2xl py-4 px-6 pr-12 focus:outline-none border border-gray-800 focus:border-gray-700 text-right placeholder:text-gray-500 shadow-sm"
-                  dir="rtl"
-                />
-                <svg
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-6">
-              {[...hadiths.sort((a, b) => a.id - b.id)]?.map((hadith) => {
-                return (
-                  <Hadith
-                    id={`hadith-${hadith.id}`}
-                    hadith={hadith}
-                    key={hadith.id}
-                    allCategories={allCategories}
-                    hadithsId={hadithsId}
-                    pageid={pageid}
-                  />
-                );
-              })}
-            </div>
-
-            {/* Pagination */}
-            <div className="flex flex-col items-center gap-6 mt-8">
-              {/* Page Input */}
-              <div className="flex items-center gap-3 bg-[#1E293B] p-3 rounded-xl border border-gray-800">
-                <span className="text-gray-400 text-sm">انتقال إلى</span>
-                <form
-                  onSubmit={handlePageSubmit}
-                  className="flex flex-col items-center gap-2"
-                >
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="text"
-                      value={pageInput}
-                      onChange={handlePageInputChange}
-                      placeholder="رقم الصفحة"
-                      className={`w-24 h-9 bg-[#2D3B4F] text-gray-300 rounded-lg px-3 focus:outline-none border ${
-                        error ? "border-red-500" : "border-gray-700"
-                      } text-center placeholder:text-gray-500 text-sm`}
-                      min="1"
-                      max={hadithList.meta?.last_page}
-                    />
-                    <button
-                      type="submit"
-                      className="btn btn-sm bg-blue-600 hover:bg-blue-700 text-white border-none min-h-0 h-9"
-                    >
-                      انتقال
-                    </button>
-                  </div>
-                  {error && (
-                    <span className="text-red-500 text-xs mt-1">{error}</span>
-                  )}
-                </form>
-              </div>
-
-              {/* Pagination Buttons */}
-              <div className="join flex-wrap justify-center items-center gap-2">
-                {/* Previous Button */}
-                <NavLink
-                  to={`/hadiths/${hadithsId}/page/${parseInt(pageid) - 1}`}
-                  className={`join-item btn bg-[#1E293B] text-gray-300 hover:bg-[#2D3B4F] border-gray-800 ${
-                    parseInt(pageid) <= 1 ? "btn-disabled" : ""
-                  }`}
-                >
-                  <ArrowLeftIcon className="w-5 h-5" />
-                </NavLink>
-
-                {/* Page Numbers */}
-                {(() => {
-                  const lastPage = hadithList.meta?.last_page;
-                  const currentPage = parseInt(pageid);
-                  let pages = [];
-
-                  if (lastPage <= 9) {
-                    // إذا كان عدد الصفحات 9 أو أقل، اعرض كل الأرقام
-                    pages = Array.from({ length: lastPage }, (_, i) => i + 1);
-                  } else {
-                    // إذا كان العدد أكبر من 9، اعرض النظام المطلوب
-                    if (currentPage <= 4) {
-                      // في بداية الصفحات
-                      pages = [1, 2, 3, 4, 5, null, lastPage - 1, lastPage];
-                    } else if (currentPage >= lastPage - 3) {
-                      // في نهاية الصفحات
-                      pages = [
-                        1,
-                        2,
-                        null,
-                        lastPage - 4,
-                        lastPage - 3,
-                        lastPage - 2,
-                        lastPage - 1,
-                        lastPage,
-                      ];
-                    } else {
-                      // في المنتصف
-                      pages = [
-                        1,
-                        2,
-                        null,
-                        currentPage - 1,
-                        currentPage,
-                        currentPage + 1,
-                        null,
-                        lastPage - 1,
-                        lastPage,
-                      ];
-                    }
-                  }
-
-                  return pages.map((page, index) => {
-                    if (page === null) {
-                      return (
-                        <button
-                          key={`dots-${index}`}
-                          className="join-item btn btn-disabled bg-[#1E293B] text-gray-500 border-gray-800"
-                        >
-                          ...
-                        </button>
-                      );
-                    }
-                    return (
-                      <NavLink
-                        to={`/hadiths/${hadithsId}/page/${page}`}
-                        className={`join-item btn bg-[#1E293B] text-gray-300 hover:bg-[#2D3B4F] border-gray-800 ${
-                          currentPage === page ? "btn-active" : ""
-                        }`}
-                        key={page}
-                      >
-                        {page}
-                      </NavLink>
-                    );
-                  });
-                })()}
-
-                {/* Next Button */}
-                <NavLink
-                  to={`/hadiths/${hadithsId}/page/${parseInt(pageid) + 1}`}
-                  className={`join-item btn bg-[#1E293B] text-gray-300 hover:bg-[#2D3B4F] border-gray-800 ${
-                    parseInt(pageid) >= hadithList.meta?.last_page
-                      ? "btn-disabled"
-                      : ""
-                  }`}
-                >
-                  <ArrowRightIcon className="w-5 h-5" />
-                </NavLink>
-              </div>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Enhanced Header */}
+        <div className="backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl p-6 mb-8">
+          <div className="text-center">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-blue-100 to-gray-300 bg-clip-text text-transparent mb-4">
+              {hadithName}
+            </h1>
+            <div className="flex justify-center gap-4 flex-wrap">
+              <span className="bg-blue-500/10 text-blue-400 px-4 py-1 rounded-full border border-blue-500/20">
+                عدد الأحاديث: {totalHadiths}
+              </span>
+              <span className="bg-purple-500/10 text-purple-400 px-4 py-1 rounded-full border border-purple-500/20">
+                الصفحة: {pageid}
+              </span>
             </div>
           </div>
         </div>
-      )}
-    </>
+
+        {/* Enhanced Hadiths Grid */}
+        <div className="space-y-4 mb-12">
+          {hadiths?.map((hadith, index) => (
+            <div
+              key={hadith.id}
+              className="fade-in-up"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <Hadith
+                hadith={hadith}
+                currentPage={pageid}
+                allCategories={allCategories}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Enhanced Pagination */}
+        <div className="flex justify-center gap-3 flex-wrap">
+          <NavLink
+            key="prev"
+            to={`/hadiths/${hadithsId}/page/${Math.max(1, currentPage - 1)}`}
+            className={`px-4 py-2 rounded-xl backdrop-blur-md transition-all duration-300 
+              ${currentPage <= 1
+                ? "opacity-50 cursor-not-allowed bg-white/5 text-gray-500"
+                : "bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10"
+              }`}
+            onClick={(e) => currentPage <= 1 && e.preventDefault()}
+          >
+            السابق
+          </NavLink>
+
+          {generatePagination().map((page, index) => {
+            if (page === 'dots') {
+              return (
+                <span
+                  key={`dots-${index}`}
+                  className="px-4 py-2 text-gray-400"
+                >
+                  ...
+                </span>
+              );
+            }
+            
+            return (
+              <NavLink
+                key={`page-${page}`}
+                to={`/hadiths/${hadithsId}/page/${page}`}
+                className={`px-4 py-2 rounded-xl backdrop-blur-md transition-all duration-300 
+                  ${currentPage === page
+                    ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/25"
+                    : "bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10"
+                  }`}
+              >
+                {page}
+              </NavLink>
+            );
+          })}
+
+          <NavLink
+            key="next"
+            to={`/hadiths/${hadithsId}/page/${Math.min(lastPage, currentPage + 1)}`}
+            className={`px-4 py-2 rounded-xl backdrop-blur-md transition-all duration-300 
+              ${currentPage >= lastPage
+                ? "opacity-50 cursor-not-allowed bg-white/5 text-gray-500"
+                : "bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10"
+              }`}
+            onClick={(e) => currentPage >= lastPage && e.preventDefault()}
+          >
+            التالي
+          </NavLink>
+        </div>
+      </div>
+    </div>
   );
 }

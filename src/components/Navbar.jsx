@@ -3,84 +3,84 @@ import { NavLink, Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
-    <div className="navbar bg-base-100 shadow-lg p-4">
-      <div className="flex-1">
-        <Link
-          to={"/"}
-          className="btn btn-ghost text-xl md:text-2xl lg:text-3xl font-bold hover:bg-blue-500 hover:text-white transition-colors"
-        >
-          <img
-            src="./logo-white-and-blue.png"
-            className="w-32 sm:w-36 md:w-40 lg:w-44"
-            alt="حديث شريف"
-          />
-        </Link>
-      </div>
-
-      <div className="navbar-center hidden md:flex">
-        <ul className="menu menu-horizontal gap-2">
-          <li>
-            <NavLink
-              to={"/"}
-              className={({ isActive }) =>
-                `px-4 hover:bg-blue-500 hover:text-white transition-colors ${
-                  isActive ? "bg-blue-500 text-white" : ""
-                }`
-              }
-            >
-              الرئيسية
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to={"/hadiths"}
-              className={({ isActive }) =>
-                `px-4 hover:bg-blue-500 hover:text-white transition-colors ${
-                  isActive ? "bg-blue-500 text-white" : ""
-                }`
-              }
-            >
-              الأحاديث
-            </NavLink>
-          </li>
-        </ul>
-      </div>
-
-      <div className="md:hidden">
-        <div className="dropdown dropdown-end">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn btn-ghost btn-circle hover:bg-blue-500 hover:text-white transition-colors"
+    <div className="backdrop-blur-md bg-gradient-to-b from-gray-900/90 to-transparent border-b border-white/10">
+      <nav className="container mx-auto px-4 py-4">
+        <div className="flex justify-between items-center">
+          <Link
+            to="/"
+            className="relative group"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16M4 18h7"
-              />
-            </svg>
+            <div className="absolute -inset-2 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-lg blur opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
+            <img
+              src="/logo-white-and-blue.png"
+              className="w-32 sm:w-36 md:w-40 lg:w-44 relative"
+              alt="حديث شريف"
+            />
+          </Link>
+
+          <div className="hidden md:flex gap-4">
+            {[
+              { to: "/", label: "الرئيسية" },
+              { to: "/hadiths", label: "الأحاديث" }
+            ].map((link) => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                className={({ isActive }) =>
+                  `px-4 py-2 rounded-lg transition-all duration-300 backdrop-blur-sm
+                  ${isActive 
+                    ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/25" 
+                    : "bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10"
+                  }`
+                }
+              >
+                {link.label}
+              </NavLink>
+            ))}
           </div>
-          <ul
-            tabIndex={0}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[999] mt-3 w-52 p-2 shadow-lg"
-          >
-            <li>
-              <NavLink to={"/"}>الرئيسية</NavLink>
-            </li>
-            <li>
-              <NavLink to={"/hadiths"}>الأحاديث</NavLink>
-            </li>
-          </ul>
+
+          <div className="md:hidden">
+            <div className="dropdown dropdown-end">
+              <button
+                className="p-2 rounded-lg backdrop-blur-sm bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 text-gray-300"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M4 6h16M4 12h16M4 18h8"
+                  />
+                </svg>
+              </button>
+              <ul className="dropdown-content menu mt-2 p-2 rounded-lg backdrop-blur-md bg-gray-900/90 border border-white/10 w-52">
+                {[
+                  { to: "/", label: "الرئيسية" },
+                  { to: "/hadiths", label: "الأحاديث" }
+                ].map((link) => (
+                  <li key={link.to}>
+                    <NavLink
+                      to={link.to}
+                      className={({ isActive }) =>
+                        `block px-4 py-2 rounded-lg transition-colors
+                        ${isActive ? "text-blue-400" : "text-gray-300 hover:text-blue-400"}`
+                      }
+                    >
+                      {link.label}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
-      </div>
+      </nav>
     </div>
   );
 }
