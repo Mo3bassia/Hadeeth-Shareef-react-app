@@ -88,7 +88,7 @@ export default function Footer() {
           <p className="text-gray-400 text-sm">
             تم التطوير بواسطة{" "}
             <a
-              href="https://github.com/mohamedabassia"
+              href="https://github.com/mo3bassia"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-400 hover:text-blue-300 transition-colors"
