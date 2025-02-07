@@ -59,8 +59,8 @@ export default function Page({ allCategories, savedHadiths, setSavedHadiths }) {
         `https://hadeethenc.com/api/v1/categories/roots/?language=ar`
       );
       let responseForName = await requestforName.json();
-      setHadithName(responseForName[hadithsId - 1].title);
-      setTotalHadiths(responseForName[hadithsId - 1].hadeeths_count);
+      setHadithName(responseForName[hadithsId - 1]?.title);
+      setTotalHadiths(responseForName[hadithsId - 1]?.hadeeths_count);
       setHadithList(response);
       [...Array(response.data.length).keys()].forEach((id) => {
         async function getHadith() {
@@ -79,7 +79,7 @@ export default function Page({ allCategories, savedHadiths, setSavedHadiths }) {
     }
 
     getHadithList();
-  }, [pageid]);
+  }, [pageid, hadithsId]);
 
   useEffect(function () {
     setHeightContainer(containerEl?.current?.offsetHeight);
@@ -229,6 +229,9 @@ export default function Page({ allCategories, savedHadiths, setSavedHadiths }) {
     return paginationItems;
   };
 
+  // console.log(hadithsId)
+  // console.log(allCategories.filter(cat => cat.id == hadithsId)[0])
+  // console.log(hadiths);
   return (
     <div className="min-h-screen relative overflow-hidden backdrop-blur-3xl">
       {/* Animated Background */}
@@ -272,11 +275,15 @@ export default function Page({ allCategories, savedHadiths, setSavedHadiths }) {
             <div className="backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl p-6 mb-8">
               <div className="text-center">
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-blue-100 to-gray-300 bg-clip-text text-transparent mb-4">
-                  {hadithName}
+                  {hadithName ||
+                    allCategories.filter((cat) => cat.id == hadithsId)[0].title}
                 </h1>
                 <div className="flex justify-center gap-4 flex-wrap">
                   <span className="bg-blue-500/10 text-blue-400 px-4 py-1 rounded-full border border-blue-500/20">
-                    عدد الأحاديث: {totalHadiths}
+                    عدد الأحاديث:{" "}
+                    {totalHadiths ||
+                      allCategories.filter((cat) => cat.id == hadithsId)[0]
+                        .hadeeths_count}
                   </span>
                   <span className="bg-purple-500/10 text-purple-400 px-4 py-1 rounded-full border border-purple-500/20">
                     الصفحة: {pageid}

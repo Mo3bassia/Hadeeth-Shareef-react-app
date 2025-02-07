@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import SaveIcon from "../icons/BookmarkIcon";
 import SaveSlashIcon from "../icons/SaveSlashIcon";
 import CopyIcon from "../icons/Clipboard";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Hadith({
   hadith,
@@ -49,6 +49,13 @@ export default function Hadith({
     // setShowSaveNotification(true);
     // setTimeout(() => setShowSaveNotification(false), 2000);
     // setSavedHadiths((prev) => [...prev, hadith]);
+  }
+
+  const navigate = useNavigate();
+  function handleCat(e, link) {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(link);
   }
 
   return (
@@ -163,9 +170,16 @@ export default function Hadith({
 
       {hadith.categories?.length > 0 && (
         <>
-          <div className="w-full h-[1px] bg-white/5 my-4"></div>
-          <div className="flex flex-col gap-3">
-            <span className="text-gray-400 text-sm">التصنيفات الفرعية:</span>
+          <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-6"></div>
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-blue-400/80 text-sm bg-blue-400/10 px-3 py-1 rounded-full border border-blue-400/20">
+                التصنيفات الفرعية
+              </span>
+              <span className="text-gray-400 text-xs">
+                ({hadith.categories.length})
+              </span>
+            </div>
             <div className="flex flex-wrap gap-2">
               {hadith.categories?.map((cat) => {
                 const category = allCategories.find((aCat) => aCat.id == cat);
@@ -173,11 +187,14 @@ export default function Hadith({
 
                 return (
                   <span
+                    onClick={(e) => handleCat(e, `/hadiths/${cat}/page/1`)}
                     key={cat}
-                    className="px-3 py-1 bg-white/5 text-gray-300 text-sm rounded-full 
-                      border border-white/10 hover:bg-white/10 hover:border-blue-500/20 
-                      transition-all duration-300 cursor-pointer"
+                    className="group/cat relative px-4 py-2 bg-gradient-to-r from-white/5 to-transparent 
+                      text-gray-300 text-sm rounded-lg border border-white/10 
+                      hover:bg-white/10 hover:border-blue-500/20 hover:text-blue-400
+                      transition-all duration-300 cursor-pointer flex items-center gap-2"
                   >
+                    <span className="w-2 h-2 rounded-full bg-blue-400/50 group-hover/cat:bg-blue-400"></span>
                     {category.title}
                   </span>
                 );

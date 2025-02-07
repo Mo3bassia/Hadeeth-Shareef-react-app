@@ -30,24 +30,31 @@ export default function Home() {
     },
   ];
 
+  // تحديث الإحصائيات
   const statistics = [
     {
-      number: "5300+",
+      number: "4000+",
       label: "حديث شريف",
       color: "from-blue-500/20",
       icon: "📚",
     },
     {
-      number: "40+",
-      label: "كتاب حديث",
+      number: "450+",
+      label: "تصنيف",
+      color: "from-purple-500/20",
+      icon: "🗂️",
+    },
+    {
+      number: "300+",
+      label: "شرح مفصل",
       color: "from-green-500/20",
       icon: "📖",
     },
     {
-      number: "400+",
-      label: "تصنيف فرعي",
+      number: "200+",
+      label: "معاني الكلمات",
       color: "from-yellow-500/20",
-      icon: "🗂️",
+      icon: "🔍",
     },
   ];
 
@@ -121,8 +128,8 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Enhanced Statistics Section */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 lg:gap-6 mt-20">
+        {/* تحديث قسم الإحصائيات */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-20">
           {statistics.map((stat, index) => (
             <div
               key={index}
@@ -213,33 +220,6 @@ export default function Home() {
             </div>
             <div className="mt-6 text-gray-400">رواه مسلم</div>
           </blockquote>
-        </div>
-
-        {/* Enhanced Statistics Section */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-20">
-          {[
-            { number: "1000+", label: "حديث شريف", color: "from-blue-500/20" },
-            { number: "500+", label: "تفسير وشرح", color: "from-green-500/20" },
-            { number: "100+", label: "تصنيف", color: "from-purple-500/20" },
-            {
-              number: "24/7",
-              label: "متاح دائماً",
-              color: "from-yellow-500/20",
-            },
-          ].map((stat, index) => (
-            <div
-              key={index}
-              className={`backdrop-blur-md bg-gradient-to-br ${stat.color} to-transparent border border-white/10 rounded-xl p-6 
-                text-center transform hover:scale-105 transition-all duration-300 hover:shadow-lg group`}
-            >
-              <div className="text-3xl font-bold bg-gradient-to-r from-white via-blue-100 to-gray-300 bg-clip-text text-transparent group-hover:scale-110 transition-transform">
-                {stat.number}
-              </div>
-              <div className="text-gray-400 mt-2 group-hover:text-gray-300 transition-colors">
-                {stat.label}
-              </div>
-            </div>
-          ))}
         </div>
       </div>
     </div>
