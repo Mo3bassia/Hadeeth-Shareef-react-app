@@ -11,6 +11,14 @@ import { useLocalStorage } from "./hooks/useLocalStorage";
 import Footer from "./components/Footer";
 import NotFound from "./pages/NotFound";
 
+function AppContent() {
+  const location = useLocation();
+
+  useEffect(() => {
+    document.documentElement.scrollIntoView({ behavior: "smooth" });
+  }, [location]);
+}
+
 export default function App() {
   let [hadithList, setHadithList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -135,6 +143,7 @@ export default function App() {
         </main>
         <Footer />
       </div>
+      <AppContent />
     </BrowserRouter>
   );
 }
