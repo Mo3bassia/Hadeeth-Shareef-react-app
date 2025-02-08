@@ -7,8 +7,10 @@ import ZoomInIcon from "../icons/ZoomInIcon.jsx";
 import ArrowLeftIcon from "../icons/ArrowLeftIcon";
 import Loader from "../components/Loader";
 import { useLocalStorage } from "../hooks/useLocalStorage.js";
+import SaveIcon from "../icons/BookmarkIcon";
+import SaveSlashIcon from "../icons/SaveSlashIcon";
 
-export default function HadithPage() {
+export default function HadithPage({ savedHadiths, setSavedHadiths }) {
   const { hadithsId, pageid, hadith } = useParams();
   const [currentHadith, setCurrentHadith] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -17,6 +19,8 @@ export default function HadithPage() {
   const [showCopyLinkNotification, setShowCopyLinkNotification] =
     useState(false);
   const [fontSize, setFontSize] = useLocalStorage(1, "font-size"); // تصحيح ترتيب المعاملات
+  const [showSaveNotification, setShowSaveNotification] = useState(false);
+  const [showUnsaveNotification, setShowUnsaveNotification] = useState(false);
 
   useEffect(() => {
     async function getHadith() {
@@ -49,6 +53,29 @@ export default function HadithPage() {
       if (prev >= 1.5) return 1;
       return prev + 0.25;
     });
+  };
+
+  const handleSave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (savedHadiths.filter((h) => h.id === currentHadith.id).length) {
+      setSavedHadiths((prev) => prev.filter((h) => h.id !== currentHadith.id));
+      setShowUnsaveNotification(true);
+      setTimeout(() => setShowUnsaveNotification(false), 2000);
+    } else {
+      setShowSaveNotification(true);
+      setTimeout(() => setShowSaveNotification(false), 2000);
+      setSavedHadiths((prev) => [
+        ...prev,
+        {
+          ...currentHadith,
+          hadithsId: hadithsId,
+          pageid: pageid,
+          idHTML: `hadith-${currentHadith.id}`,
+        },
+      ]);
+    }
   };
 
   const HadithContentWithoutTashkel = currentHadith?.hadeeth
@@ -142,15 +169,6 @@ export default function HadithPage() {
                   </button>
                   <button
                     className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-white/5 to-transparent backdrop-blur-sm border border-white/10 
-                      flex items-center justify-center hover:bg-white/10 transition-all duration-300 cursor-pointer group relative"
-                  >
-                    <BookmarkIcon className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
-                    <span className="absolute scale-0 group-hover:scale-100 transition-all duration-200 -top-12 right-1/2 translate-x-1/2 text-xs bg-[#293446] text-gray-300 px-3 py-2 rounded shadow-lg whitespace-nowrap z-50">
-                      حفظ الحديث
-                    </span>
-                  </button>
-                  <button
-                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-white/5 to-transparent backdrop-blur-sm border border-white/10 
                       flex items-center justify-center hover:bg-white/10 transition-all duration-300 cursor-pointer relative group"
                     onClick={handleCopy}
                   >
@@ -162,6 +180,54 @@ export default function HadithPage() {
                       <span className="absolute left-1/2 -translate-x-1/2 top-full mt-2 bg-green-900/50 text-green-300 px-3 py-2 rounded text-xs notification-fade-out whitespace-nowrap z-50">
                         تم النسخ بنجاح
                       </span>
+                    )}
+                  </button>
+                  <button
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-white/5 to-transparent backdrop-blur-sm border border-white/10 
+                      flex items-center justify-center hover:bg-white/10 transition-all duration-300 cursor-pointer group/save relative"
+                    onClick={handleSave}
+                  >
+                    {savedHadiths.filter((h) => h.id === currentHadith.id)
+                      .length ? (
+                      <>
+                        <SaveSlashIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-300 fill-green-300 hover:fill-red-400 hover:text-red-400" />
+                        <span
+                          className="absolute scale-0 group-hover/save:scale-100 transition-all duration-200 -top-12 
+                          right-1/2 translate-x-1/2 text-xs bg-[#293446] text-red-300 px-3 py-2 
+                          rounded-lg shadow-lg whitespace-nowrap z-50 border border-red-500/20"
+                        >
+                          إلغاء الحفظ
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <SaveIcon className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400 group-hover:text-blue-500 hover:fill-blue-500" />
+                        <span
+                          className="absolute scale-0 group-hover/save:scale-100 transition-all duration-200 -top-12 
+                          right-1/2 translate-x-1/2 text-xs bg-[#293446] text-blue-300 px-3 py-2 
+                          rounded-lg shadow-lg whitespace-nowrap z-50 border border-blue-500/20"
+                        >
+                          حفظ الحديث
+                        </span>
+                      </>
+                    )}
+                    {showSaveNotification && (
+                      <div
+                        className="absolute left-1/2 -translate-x-1/2 -bottom-12 
+                        bg-green-900/50 text-green-300 px-3 py-1.5 rounded-lg text-sm whitespace-nowrap
+                        border border-green-500/20 backdrop-blur-sm"
+                      >
+                        تم الحفظ بنجاح
+                      </div>
+                    )}
+                    {showUnsaveNotification && (
+                      <div
+                        className="absolute left-1/2 -translate-x-1/2 -bottom-12 
+                        bg-red-900/50 text-red-300 px-3 py-1.5 rounded-lg text-sm whitespace-nowrap
+                        border border-red-500/20 backdrop-blur-sm"
+                      >
+                        تم إلغاء الحفظ بنجاح
+                      </div>
                     )}
                   </button>
                 </div>

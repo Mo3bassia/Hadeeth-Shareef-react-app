@@ -143,7 +143,7 @@ export default function App() {
             <Route path="/about" element={<About />} />
             <Route
               path="/hadiths/:hadithsId/page/:pageid/hadith/:hadith"
-              element={<Hadith />}
+              element={<Hadith  savedHadiths={savedHadiths} setSavedHadiths={setSavedHadiths}/>}
             />
             <Route
               path="/saved"
