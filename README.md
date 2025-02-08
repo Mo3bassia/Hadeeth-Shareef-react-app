@@ -2,6 +2,10 @@
 
 A modern and beautiful Hadith app built with React, Tailwind CSS, and DaisyUI. It provides an easy way to browse, search, and share authentic Hadiths with a clean and user-friendly interface.
 
+## 🌐 Live Demo 🔥
+
+👉 Try it out: [Live Demo](https://hadith-shareef-app-mo3bassias-projects.vercel.app/)
+
 ## Features ✨
 
 - 📜 **Browse Hadiths** – View a collection of authentic Hadiths from trusted sources.
@@ -10,7 +14,6 @@ A modern and beautiful Hadith app built with React, Tailwind CSS, and DaisyUI. I
 - 📖 **Hadith Meanings** – Understand Hadiths with provided explanations.
 - 💾 **Save & Bookmark** – Save favorite Hadiths for quick access.
 - 📤 **Share Hadiths** – Easily share Hadiths with friends via social media.
-- 🌙 **Dark Mode Support** – Enjoy reading in both light and dark themes.
 
 ## Tech Stack 🛠️
 
