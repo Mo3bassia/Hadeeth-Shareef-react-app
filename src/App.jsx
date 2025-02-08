@@ -10,6 +10,7 @@ import Saved from "./pages/Saved";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import Footer from "./components/Footer";
 import NotFound from "./pages/NotFound";
+import Search from "./pages/Search";
 
 function AppContent() {
   const location = useLocation();
@@ -24,7 +25,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [savedHadiths, setSavedHadiths] = useLocalStorage([], "savedHadiths");
   const [allCategories, setAllCategories] = useState([]);
-  const [allHadithsId, setAllHadithsId] = useState([]);
+  const [allHadithsContent, setAllHadithsContent] = useState([]);
   const [allHadiths, setAllHadiths] = useState([]);
   const [allHadithsCount, setAllHadithsCount] = useState(0);
   useEffect(function () {
@@ -56,7 +57,7 @@ export default function App() {
       );
       let responseforList = await request.json();
       setHadithList(responseforList);
-      responseforList.forEach((hadith, index) => {
+      responseforList.forEach((hadith, indexes) => {
         const id = hadith.id;
         const counts = hadith.hadeeths_count;
         async function getHadithsId() {
@@ -64,10 +65,36 @@ export default function App() {
             `https://hadeethenc.com/api/v1/hadeeths/list/?language=ar&category_id=${id}&page=1&per_page=${counts}`
           );
           let response = await request.json();
-          setAllHadithsId((prev) => [
-            ...prev,
-            ...response.data.map((hadith) => hadith.id),
-          ]);
+          response.data.map((r, index) => {
+            r.pageid = Math.floor(index / 20) + 1;
+            r.hadithsId = indexes + 1;
+            r.title = r.title
+              .replaceAll("ُ", "")
+              .replaceAll("َ", "")
+              .replaceAll("ِ", "")
+              .replaceAll("ً", "")
+              .replaceAll("ٌ", "")
+              .replaceAll("ٍ", "")
+              .replaceAll("ّ", "")
+              .replaceAll("ْ", "")
+              .replaceAll("ٰ", "")
+              .replaceAll("ٓ", "")
+              .replaceAll("ٔ", "")
+              .replaceAll("ٕ", "")
+              .replaceAll("ٖ", "")
+              .replaceAll("ٗ", "")
+              .replaceAll("٘", "")
+              .replaceAll("ٙ", "")
+              .replaceAll("ٚ", "")
+              .replaceAll("ٛ", "")
+              .replaceAll("ٜ", "")
+              .replaceAll("ٝ", "")
+              .replaceAll("ٞ", "")
+              .replaceAll("ٟ", "");
+            return r;
+          });
+          console.log(response.data);
+          setAllHadithsContent((prev) => [...prev, ...response.data]);
         }
         getHadithsId();
       });
@@ -77,21 +104,11 @@ export default function App() {
     getHadithList();
   }, []);
 
-  // useEffect(() => {
-  //   if (allHadithsId.length == allHadithsCount && allCategories.length) {
-  //     allHadithsId.forEach((id) => {
-  //       async function getHadithDetails() {
-  //         let request = await fetch(
-  //           `https://hadeethenc.com/api/v1/hadeeths/one/?language=ar&id=${id}`
-  //         );
-  //         let response = await request.json();
-  //         console.log(response)
-  //         setAllHadiths((prev) => [...prev, response]);
-  //       }
-  //       getHadithDetails();
-  //     });
-  //   }
-  // }, [allHadithsCount, allHadithsId, allCategories]);
+  useEffect(() => {
+    if (allHadithsContent.length == allHadithsCount && allCategories.length) {
+      console.log(allHadithsContent);
+    }
+  }, [allHadithsCount, allHadithsContent, allCategories]);
 
   return (
     <BrowserRouter>
@@ -105,8 +122,8 @@ export default function App() {
               element={
                 <Hadiths
                   allCategories={allCategories}
-                  setAllHadithsId={setAllHadithsId}
-                  allHadithsId={allHadithsId}
+                  setAllHadithsContent={setAllHadithsContent}
+                  allHadithsContent={allHadithsContent}
                   hadithList={hadithList}
                   setHadithList={setHadithList}
                   isLoading={isLoading}
@@ -139,6 +156,18 @@ export default function App() {
               }
             />
             <Route path="*" element={<NotFound />} />
+            <Route
+              path="/search"
+              element={
+                <Search
+                  allHadithsContent={allHadithsContent}
+                  allHadithsCount={allHadithsCount}
+                  allCategories={allCategories}
+                  savedHadiths={savedHadiths}
+                  setSavedHadiths={setSavedHadiths}
+                />
+              }
+            />
           </Routes>
         </main>
         <Footer />

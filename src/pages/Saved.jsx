@@ -48,7 +48,6 @@ export default function Saved({
         ) : (
           <div className="space-y-4">
             {savedHadiths.map((hadith, index) => {
-              console.log(hadith);
               return (
                 <div
                   key={hadith.id}

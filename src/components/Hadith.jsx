@@ -39,7 +39,7 @@ export default function Hadith({
         ...prev,
         {
           ...hadith,
-          currentPage: pageid,
+          // currentPage: pageid,
           hadithsId: hadithsId,
           pageid: pageid,
           idHTML: `hadith-${hadith.id}`,

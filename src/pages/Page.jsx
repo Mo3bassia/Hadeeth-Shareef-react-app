@@ -302,7 +302,7 @@ export default function Page({ allCategories, savedHadiths, setSavedHadiths }) {
                 >
                   <Hadith
                     hadith={hadith}
-                    currentPage={pageid}
+                    // currentPage={pageid}
                     allCategories={allCategories}
                     hadithsId={hadithsId}
                     pageid={pageid}
