@@ -110,6 +110,10 @@ export default function App() {
     }
   }, [allHadithsCount, allHadithsContent, allCategories]);
 
+  useEffect(() => {
+    document.documentElement.className = "dark";
+  }, []);
+
   return (
     <BrowserRouter>
       <div className="mt-4 container mx-auto px-5 rtl font-['Baloo_Bhaijaan_2']">
@@ -143,7 +147,12 @@ export default function App() {
             <Route path="/about" element={<About />} />
             <Route
               path="/hadiths/:hadithsId/page/:pageid/hadith/:hadith"
-              element={<Hadith  savedHadiths={savedHadiths} setSavedHadiths={setSavedHadiths}/>}
+              element={
+                <Hadith
+                  savedHadiths={savedHadiths}
+                  setSavedHadiths={setSavedHadiths}
+                />
+              }
             />
             <Route
               path="/saved"
